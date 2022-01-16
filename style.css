@@ -1,0 +1,84 @@
+#board {
+    white-space: nowrap;
+}
+
+#board .col {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+#board .field {
+    margin: 0;
+    padding: 0;
+    background-color: green;
+    height: 60px;
+    width: 60px;
+    border: solid 1px #000;
+}
+
+#board .able-put {
+    background-color: lawngreen;
+}
+
+#board .record {
+    font-size: 35px; 
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0%;
+}
+
+#current-player {
+    font-size: 35px;
+}
+
+#current-player::after {
+    content: ' の番です';
+    font-size: 30px;
+}
+
+#black-count::before {
+    content: '黒：';
+}
+
+#white-count::before {
+    content: '白：';
+}
+
+.piece-count {
+    margin-right: 15px;
+}
+
+.piece-count::after {
+    content: '個';
+}
+
+.black-piece {
+    position: relative;
+    top: 4px;
+    left: 4px;
+    height: 52px;
+    width: 52px;
+    border-radius: 50%;
+    background-color: #000;
+}
+
+.black-piece .record {
+    color: #fff;
+}
+
+.white-piece {
+    position: relative;
+    top: 4px;
+    left: 4px;
+    height: 52px;
+    width: 52px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.white-piece .record {
+    color: #000;
+}
