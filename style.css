@@ -1,15 +1,26 @@
-#board {
-    white-space: nowrap;
+.board {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+    /* width: calc(100% + 20px); */
+    margin: -10px;
+    background-color: rgb(250, 150, 150);
 }
 
-#board .col {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    white-space: nowrap;
+.card {
+    display: block;
+    max-width: 100%;
+    width: 70px;
+    height: 100px;
+    margin: 10px;
+    padding: 5% 0;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px #ccc;
+    background-color: #fff;
 }
 
-#board .field {
+/* #board .field {
     margin: 0;
     padding: 0;
     background-color: green;
@@ -81,4 +92,4 @@
 
 .white-piece .record {
     color: #000;
-}
+} */
