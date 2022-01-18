@@ -9,14 +9,148 @@
 
 <body>
     <div class="container">
-        <ul class="board">
-            <li class="card">1</li>
-            <li class="card">1</li>
-        </div>
+        <div id="board"></div>
+        <div id="card-info"></div>
     </div>
 </body>
 
 <script type="text/javascript">
+    const BOARD = document.getElementById('board')
+    const TRUMP_BACK = document.getElementById('trump-back')
+    const CARD = document.getElementById('card')
+    const TRUMP_NUM = 13
+    const TRUMP_MARK = 4
+    const TRUMP_KEY_MIN = 0
+    const TRUMP_KEY_MAX = 51
+
+    const trumpNums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+    const trumpMarks = ['♠', '♥', '♦', '♣']
+    const trumpArray = new Array();
+
+    let trumpKeys = []
+
+    const genId = (x, y) => `${x}_${y}`
+    // const getCard = (cardNumber) =>
+    //     document.querySelectorAll(`.${genId(cardNumber.x, cardNumber.y)}`)
+    const getCard = (cardNumber) =>
+        document.getElementById(genId(cardNumber.x, cardNumber.y))
+
+
+    function intRandom(max, min) {
+        return Math.floor( Math.random() * (max - min + 1)) + min;
+    }
+
+    function singleRandomNum() {
+        let keyNums = []
+        let randomNums = []
+        for (let i = 0; i <= TRUMP_KEY_MAX; i++) {
+            keyNums[i] = i
+        } 
+        for (let j = 0; keyNums.length > 0; j++) {
+            randomNum = intRandom(keyNums.length - 1, 0)
+            trumpKeys = trumpKeys.concat(keyNums.splice(randomNum, 1))
+        }
+    }
+
+    function getCardNumber(clickEvent) {
+        const clickX = clickEvent.pageX
+        const clickY = clickEvent.pageY
+
+        // ボードの位置を取得
+        const clientRect = BOARD.getBoundingClientRect()
+        const positionX = clientRect.left + window.pageXOffset
+        const positionY = clientRect.top + window.pageYOffset
+
+        // ボード内のクリック位置を計算
+        const x = clickX - positionX
+        const y = clickY - positionY
+
+        // 何マス目かを計算
+        const noX = parseInt(x / 13)
+        const noY = parseInt(y / 4)
+        return {x: noX, y: noY}
+    }
+
+    function createTrump() {
+        for (let n = 0; n < trumpNums.length; n++) {
+            for (let m = 0; m < trumpMarks.length; m++) {
+                trumpArray.push([trumpNums[n], trumpMarks[m]])
+            }
+        }
+    }
+
+    function setInitTrump(cardNumber, trumpKey) {
+        const card = getCard(cardNumber)
+        setTrumpNum(card, trumpKey)
+        setTrumpMark(card, trumpKey)
+        setBackTrump(card)
+    }
+
+    function setTrumpNum(card, trumpKey) {
+        const trumpNum = document.createElement('div')
+        trumpNum.id = 'trump-num'
+        card.appendChild(trumpNum)
+        trumpNum.innerHTML = trumpArray[trumpKey][0]
+        trumpNum.hidden = true  
+    }
+
+    function setTrumpMark(card, trumpKey) {
+        const trumpMark = document.createElement('div')
+        trumpMark.id = 'trump-mark'
+        card.appendChild(trumpMark)
+        trumpMark.innerHTML = trumpArray[trumpKey][1]
+        trumpMark.hidden = true  
+    }
+
+    function setBackTrump(card) {
+        const trumpBack = document.createElement('div')
+        trumpBack.id = 'trump-back'
+        card.appendChild(trumpBack)
+    }
+
+    function createBoard() {
+        singleRandomNum()
+        let count = 0
+        for (let x = 0; x < 4; x++) {
+            for (let y = 0; y < 13; y++) {
+                const card = document.createElement('div')
+                card.id = genId(x, y)
+                card.classList.add('card')
+                BOARD.appendChild(card)
+
+                // setBackTrump()
+                setInitTrump({x: x, y: y}, trumpKeys[count])
+                ++count
+            }
+        }
+    }
+
+	function trumpClick(){
+        const card = event.currentTarget
+        const trumpNum = card.children[0]
+        const trumpMark = card.children[1]
+        const trumpBack = card.children[2]
+        trumpNum.hidden = false
+        trumpMark.hidden = false
+        trumpBack.hidden = true
+	}
+
+    function addClick() {
+        const cards = document.getElementsByClassName('card');
+        for(let i = 0; i < cards.length; i++) {
+            cards[i].addEventListener('click', trumpClick, false);
+        }
+    }
+
+    createTrump()
+    createBoard()
+    addClick()
+
+
+    // CARD.addEventListener('click', function() {
+    //     console.log(event.target), false
+    // })
+
 
 </script>
 

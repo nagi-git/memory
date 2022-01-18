@@ -1,23 +1,47 @@
-.board {
+#board {
     display: flex;
     flex-wrap: wrap;
     justify-content: center; 
     /* width: calc(100% + 20px); */
     margin: -10px;
+    max-width: 700px;
+    min-width: 700px;
     background-color: rgb(250, 150, 150);
 }
 
 .card {
-    display: block;
-    max-width: 100%;
-    width: 70px;
-    height: 100px;
-    margin: 10px;
-    padding: 5% 0;
+    display: inline-block;
+    width: 40px;
+    height: 60px;
+    margin: 3px;
+    padding: 3px;
     text-align: center;
     border-radius: 5px;
-    box-shadow: 0 2px 5px #ccc;
+    box-shadow: 0 2px 5px #666;
     background-color: #fff;
+}
+
+.trump {
+    font-size: 20px; 
+    position: absolute;
+}
+
+#trump-back {
+    width: 40px;
+    height: 60px;
+    background-color: #fc693b;
+    background-image:
+    repeating-linear-gradient(
+    -45deg,
+    #fff,
+    #fff 3px,
+    transparent 0,
+    transparent 7px);
+	cursor: pointer;
+}
+
+.card:hover {
+	opacity: 0.6;
 }
 
 /* #board .field {
