@@ -10,25 +10,29 @@
 <body>
     <div class="container">
         <div id="board"></div>
-        <div id="play-status">
-            <div id="player">
-                <div id="player-name">プレイヤ－1</div>
+        <div class="play-status">
+            <div class="current-player"></div>
+            <div id="player1" class="player">
+                <div class="player-name">プレイヤ－1</div>
+                <div class="all-pair-card"></div>
             </div>
-            <div id="player">
-                <div id="player-name2">プレイヤ－2</div>
+            <div id="player2" class="player">
+                <div class="player-name">プレイヤ－2</div>
+                <div class="all-pair-card"></div>
             </div>
         </div>
     </div>
 </body>
 
 <script type="text/javascript">
-    const BOARD = document.getElementById('board')
-    const TRUMP_BACK = document.getElementById('trump-back')
-    const CARD = document.getElementById('card')
     const TRUMP_NUM = 13
     const TRUMP_MARK = 4
     const TRUMP_KEY_MIN = 0
     const TRUMP_KEY_MAX = 51
+    const PLAYER_COUNT = 2
+
+    const BOARD = document.getElementById('board')
+    const CARD = document.querySelectorAll('.card')
 
     const trumpNums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
     const trumpMarks = ['♠', '♥', '♦', '♣']
@@ -38,6 +42,7 @@
     let turnCount = 0
     let firstChoice = ''
     let secondChoice = ''
+    let currentPlayerNum = 1
 
     const genId = (x, y) => `${x}_${y}`
     const getCard = (cardNumber) =>
@@ -67,35 +72,6 @@
         }
     }
 
-    function setInitTrump(cardNumber, trumpKey) {
-        const card = getCard(cardNumber)
-        setTrumpNum(card, trumpKey)
-        setTrumpMark(card, trumpKey)
-        setInitBackTrump(card)
-    }
-
-    function setTrumpNum(card, trumpKey) {
-        const trumpNum = document.createElement('div')
-        trumpNum.id = 'trump-num'
-        card.appendChild(trumpNum)
-        trumpNum.innerHTML = trumpArray[trumpKey][0]
-        trumpNum.hidden = true  
-    }
-
-    function setTrumpMark(card, trumpKey) {
-        const trumpMark = document.createElement('div')
-        trumpMark.id = 'trump-mark'
-        card.appendChild(trumpMark)
-        trumpMark.innerHTML = trumpArray[trumpKey][1]
-        trumpMark.hidden = true  
-    }
-
-    function setInitBackTrump(card) {
-        const trumpBack = document.createElement('div')
-        trumpBack.id = 'trump-back'
-        card.appendChild(trumpBack)
-    }
-
     function createBoard() {
         singleRandomNum()
         let count = 0
@@ -105,11 +81,44 @@
                 card.id = genId(x, y)
                 card.classList.add('card')
                 BOARD.appendChild(card)
-
-                setInitTrump({x: x, y: y}, trumpKeys[count])
+                setInitTrump({x: x, y: y}, trumpArray[trumpKeys[count]])
                 ++count
             }
         }
+    }
+
+    function setInitTrump(cardNumber, trumpContent) {
+        const card = getCard(cardNumber)
+        setTrumpNum(card, trumpContent[0])
+        setTrumpMark(card, trumpContent[1])
+        createBackTrump(card)
+        setBackTrump(card)
+    }
+
+    function setCurrentPlayer() {
+        const currentPlayer = document.querySelectorAll('.current-player')
+        console.log(currentPlayer)
+        currentPlayer.innerHTML = currentPlayerNum
+    }
+
+    function setTrumpNum(card, trumpContent) {
+        const trumpNum = document.createElement('div')
+        trumpNum.classList = 'trump-num'
+        card.appendChild(trumpNum)
+        trumpNum.innerHTML = trumpContent
+    }
+
+    function setTrumpMark(card, trumpContent) {
+        const trumpMark = document.createElement('div')
+        trumpMark.classList = 'trump-mark'
+        card.appendChild(trumpMark)
+        trumpMark.innerHTML = trumpContent
+    }
+
+    function createBackTrump(card) {
+        const trumpBack = document.createElement('div')
+        trumpBack.classList = 'trump-back'
+        card.appendChild(trumpBack)
     }
 
 	function setFrontTrump(card){
@@ -123,6 +132,15 @@
         return card
 	}
 
+    function setBackTrump(card) {
+        const trumpNum = card.children[0]
+        const trumpMark = card.children[1]
+        const trumpBack = card.children[2]
+        trumpNum.hidden = true
+        trumpMark.hidden = true
+        trumpBack.hidden = false
+    }
+
     function removeCard(card) {
         const trumpNum = card.children[0]
         const trumpMark = card.children[1]
@@ -134,48 +152,72 @@
         card.removeEventListener('click', trumpClick, false)
     }
 
-    function setBackTrump(card) {
-        const trumpNum = card.children[0]
-        const trumpMark = card.children[1]
-        const trumpBack = card.children[2]
-        trumpNum.hidden = true
-        trumpMark.hidden = true
-        trumpBack.hidden = false
+    function addPairCard(card) {
+        const player = document.getElementById(`player${currentPlayerNum}`).children[1]
+        const pairCard = document.createElement('div')
+        pairCard.classList = 'pair-card'
+        player.appendChild(pairCard)
+        setTrumpNum(pairCard, card.children[0].textContent)
+        setTrumpMark(pairCard, card.children[1].textContent)
     }
 
-    function isPairCheck(firstChoice, secondChoice) {
+    function openEventHandler(firstChoice, secondChoice) {
+        ableClick()
         const first = firstChoice.children[0].textContent
         const second = secondChoice.children[0].textContent
         if(first == second) {
+            addPairCard(firstChoice)
+            addPairCard(secondChoice)
             removeCard(firstChoice)
             removeCard(secondChoice)
         } else {
             setBackTrump(firstChoice)
             setBackTrump(secondChoice)
+            ++currentPlayerNum
         }
     }
 
     function trumpClick() { 
-        const card = event.currentTarget      
+        const card = event.currentTarget
         ++turnCount
+        if(currentPlayerNum > PLAYER_COUNT) {
+            currentPlayerNum = 1
+        }
         if(turnCount == 1) {
             firstChoice = setFrontTrump(card)
         } else {
             secondChoice = setFrontTrump(card)
-            setTimeout('isPairCheck(firstChoice, secondChoice)', 1700)
+            disableClick()
+            setTimeout('openEventHandler(firstChoice, secondChoice)', 1000)
             turnCount = 0
         }
     }
 
     function addClick() {
-        const cards = document.getElementsByClassName('card');
+        const cards = document.getElementsByClassName('card')
         for(let i = 0; i < cards.length; i++) {
-            cards[i].addEventListener('click', trumpClick, false);
+            cards[i].addEventListener('click', trumpClick, false)
         }
     }
 
+    function disableClick() {
+        const cards = document.getElementsByClassName('card')
+        for(let i = 0; i < cards.length; i++) {
+            cards[i].style.pointerEvents = 'none'
+        }
+    }
+
+    function ableClick() {
+        const cards = document.getElementsByClassName('card')
+        for(let i = 0; i < cards.length; i++) {
+            cards[i].style.pointerEvents = 'auto'
+        }
+    }
+
+
     createTrump()
     createBoard()
+    setCurrentPlayer()
     addClick()
 
 </script>
