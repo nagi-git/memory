@@ -10,7 +10,14 @@
 <body>
     <div class="container">
         <div id="board"></div>
-        <div id="card-info"></div>
+        <div id="play-status">
+            <div id="player">
+                <div id="player-name">プレイヤ－1</div>
+            </div>
+            <div id="player">
+                <div id="player-name2">プレイヤ－2</div>
+            </div>
+        </div>
     </div>
 </body>
 
@@ -28,13 +35,13 @@
     const trumpArray = new Array();
 
     let trumpKeys = []
+    let turnCount = 0
+    let firstChoice = ''
+    let secondChoice = ''
 
     const genId = (x, y) => `${x}_${y}`
-    // const getCard = (cardNumber) =>
-    //     document.querySelectorAll(`.${genId(cardNumber.x, cardNumber.y)}`)
     const getCard = (cardNumber) =>
         document.getElementById(genId(cardNumber.x, cardNumber.y))
-
 
     function intRandom(max, min) {
         return Math.floor( Math.random() * (max - min + 1)) + min;
@@ -52,25 +59,6 @@
         }
     }
 
-    function getCardNumber(clickEvent) {
-        const clickX = clickEvent.pageX
-        const clickY = clickEvent.pageY
-
-        // ボードの位置を取得
-        const clientRect = BOARD.getBoundingClientRect()
-        const positionX = clientRect.left + window.pageXOffset
-        const positionY = clientRect.top + window.pageYOffset
-
-        // ボード内のクリック位置を計算
-        const x = clickX - positionX
-        const y = clickY - positionY
-
-        // 何マス目かを計算
-        const noX = parseInt(x / 13)
-        const noY = parseInt(y / 4)
-        return {x: noX, y: noY}
-    }
-
     function createTrump() {
         for (let n = 0; n < trumpNums.length; n++) {
             for (let m = 0; m < trumpMarks.length; m++) {
@@ -83,7 +71,7 @@
         const card = getCard(cardNumber)
         setTrumpNum(card, trumpKey)
         setTrumpMark(card, trumpKey)
-        setBackTrump(card)
+        setInitBackTrump(card)
     }
 
     function setTrumpNum(card, trumpKey) {
@@ -102,7 +90,7 @@
         trumpMark.hidden = true  
     }
 
-    function setBackTrump(card) {
+    function setInitBackTrump(card) {
         const trumpBack = document.createElement('div')
         trumpBack.id = 'trump-back'
         card.appendChild(trumpBack)
@@ -118,22 +106,66 @@
                 card.classList.add('card')
                 BOARD.appendChild(card)
 
-                // setBackTrump()
                 setInitTrump({x: x, y: y}, trumpKeys[count])
                 ++count
             }
         }
     }
 
-	function trumpClick(){
-        const card = event.currentTarget
+	function setFrontTrump(card){
         const trumpNum = card.children[0]
         const trumpMark = card.children[1]
         const trumpBack = card.children[2]
         trumpNum.hidden = false
         trumpMark.hidden = false
         trumpBack.hidden = true
+
+        return card
 	}
+
+    function removeCard(card) {
+        const trumpNum = card.children[0]
+        const trumpMark = card.children[1]
+        const trumpBack = card.children[2]
+        trumpNum.hidden = true
+        trumpMark.hidden = true
+        trumpBack.hidden = true
+        card.classList = 'remove-card'
+        card.removeEventListener('click', trumpClick, false)
+    }
+
+    function setBackTrump(card) {
+        const trumpNum = card.children[0]
+        const trumpMark = card.children[1]
+        const trumpBack = card.children[2]
+        trumpNum.hidden = true
+        trumpMark.hidden = true
+        trumpBack.hidden = false
+    }
+
+    function isPairCheck(firstChoice, secondChoice) {
+        const first = firstChoice.children[0].textContent
+        const second = secondChoice.children[0].textContent
+        if(first == second) {
+            removeCard(firstChoice)
+            removeCard(secondChoice)
+        } else {
+            setBackTrump(firstChoice)
+            setBackTrump(secondChoice)
+        }
+    }
+
+    function trumpClick() { 
+        const card = event.currentTarget      
+        ++turnCount
+        if(turnCount == 1) {
+            firstChoice = setFrontTrump(card)
+        } else {
+            secondChoice = setFrontTrump(card)
+            setTimeout('isPairCheck(firstChoice, secondChoice)', 1700)
+            turnCount = 0
+        }
+    }
 
     function addClick() {
         const cards = document.getElementsByClassName('card');
@@ -145,12 +177,6 @@
     createTrump()
     createBoard()
     addClick()
-
-
-    // CARD.addEventListener('click', function() {
-    //     console.log(event.target), false
-    // })
-
 
 </script>
 

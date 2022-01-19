@@ -2,7 +2,6 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center; 
-    /* width: calc(100% + 20px); */
     margin: -10px;
     max-width: 700px;
     min-width: 700px;
@@ -21,9 +20,18 @@
     background-color: #fff;
 }
 
-.trump {
-    font-size: 20px; 
-    position: absolute;
+.card:hover {
+	opacity: 0.6;
+}
+
+.remove-card {
+    display: inline-block;
+    width: 40px;
+    height: 60px;
+    margin: 3px;
+    padding: 3px;
+    text-align: center;
+    background-color: rgb(250, 150, 150);;
 }
 
 #trump-back {
@@ -40,80 +48,15 @@
 	cursor: pointer;
 }
 
-.card:hover {
-	opacity: 0.6;
+#play-status {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 30px;
+    max-width: 700px;
+    min-width: 700px;
 }
 
-/* #board .field {
-    margin: 0;
-    padding: 0;
-    background-color: green;
-    height: 60px;
-    width: 60px;
-    border: solid 1px #000;
+#player {
+    display: inline-block;
+    width: 350px;
 }
-
-#board .able-put {
-    background-color: lawngreen;
-}
-
-#board .record {
-    font-size: 35px; 
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 0%;
-}
-
-#current-player {
-    font-size: 35px;
-}
-
-#current-player::after {
-    content: ' の番です';
-    font-size: 30px;
-}
-
-#black-count::before {
-    content: '黒：';
-}
-
-#white-count::before {
-    content: '白：';
-}
-
-.piece-count {
-    margin-right: 15px;
-}
-
-.piece-count::after {
-    content: '個';
-}
-
-.black-piece {
-    position: relative;
-    top: 4px;
-    left: 4px;
-    height: 52px;
-    width: 52px;
-    border-radius: 50%;
-    background-color: #000;
-}
-
-.black-piece .record {
-    color: #fff;
-}
-
-.white-piece {
-    position: relative;
-    top: 4px;
-    left: 4px;
-    height: 52px;
-    width: 52px;
-    border-radius: 50%;
-    background-color: #fff;
-}
-
-.white-piece .record {
-    color: #000;
-} */
