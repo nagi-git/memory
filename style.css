@@ -82,6 +82,12 @@
     background-color: #fddfd0;
 }
 
+#current-player {
+    display: inline-block;
+    width: 700px;
+    padding: 10px;
+}
+
 .player {
     display: inline-block;
     width: 350px;
