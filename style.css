@@ -8,7 +8,7 @@
     background-color: rgb(250, 150, 150);
 }
 
-.card {
+.trump {
     display: inline-block;
     width: 40px;
     height: 60px;
@@ -20,11 +20,11 @@
     background-color: #fff;
 }
 
-.card:hover {
+.trump:hover {
 	opacity: 0.6;
 }
 
-.remove-card {
+.remove-trump {
     display: inline-block;
     width: 40px;
     height: 60px;
@@ -34,7 +34,7 @@
     background-color: rgb(250, 150, 150);;
 }
 
-.disable-click-card {
+.disable-click-trump {
     display: inline-block;
     width: 40px;
     height: 60px;
@@ -46,7 +46,7 @@
     background-color: #fff;
 }
 
-.pair-card {
+.pair-trump {
     display: inline-block;
     width: 40px;
     height: 60px;
@@ -93,7 +93,7 @@
     width: 350px;
 }
 
-.all-pair-card {
+.all-pair-trump {
     display: block;
     width: 350px;
     margin-left: 30px;
