@@ -1,14 +1,32 @@
+#title { 
+    width: 200px;
+    height: 40px;
+    margin: 20px 0 0 30px;
+    background: #ffedcd;
+    box-shadow: 0px 0px 0px 5px #ffedcd;
+    border: dashed 2px #ffa600;
+    padding: 0.2em 0.5em;
+    color: #454545;
+    font-family: "Hiragino Sans","ヒラギノ角ゴシック";
+    font-weight: 900;
+    font-size: 30px;
+    text-align: center;
+}
+
 #board {
     display: flex;
     flex-wrap: wrap;
     justify-content: center; 
-    margin: -10px;
+    margin: 20px 0px 0px 30px;
     max-width: 700px;
     min-width: 700px;
-    background-color: rgb(250, 150, 150);
+    box-shadow: 0 2px 5px #666;
+    background-color: rgb(55, 145, 20);
+    border-radius: 5px;
 }
 
-.card {
+.trump {
+    position: relative;
     display: inline-block;
     width: 40px;
     height: 60px;
@@ -20,42 +38,54 @@
     background-color: #fff;
 }
 
-.card:hover {
+.trump:hover {
 	opacity: 0.6;
 }
 
-.remove-card {
+.trump-heart,
+.trump-diamond {
+    color: #ff0000;
+}
+
+.trump-spade::after {
+    content: '♠';
+}
+
+.trump-heart::after {
+    content: '♥';
+    color: #ff0000;
+}
+
+.trump-diamond::after {
+    content: '♦';
+    color: #ff0000;
+}
+
+.trump-clover::after {
+    content: '♣';
+}
+
+.trump-spade::after,
+.trump-heart::after,
+.trump-diamond::after,
+.trump-clover::after {
+    position: absolute;
+    left: 50%;
+    width: 20px;
+    margin-left: -10px;
+    height: 20px;
+    margin-top: -10px;
+    top: 50%;
+}
+
+.remove-trump {
     display: inline-block;
     width: 40px;
     height: 60px;
     margin: 3px;
     padding: 3px;
     text-align: center;
-    background-color: rgb(250, 150, 150);;
-}
-
-.disable-click-card {
-    display: inline-block;
-    width: 40px;
-    height: 60px;
-    margin: 3px;
-    padding: 3px;
-    text-align: center;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px #666;
-    background-color: #fff;
-}
-
-.pair-card {
-    display: inline-block;
-    width: 40px;
-    height: 60px;
-    margin-left: -30px;
-    padding: 3px;
-    text-align: left;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px #666;
-    background-color: #fff;
+    background-color: rgb(55, 145, 20);
 }
 
 .trump-back {
@@ -75,27 +105,70 @@
 .play-status {
     display: flex;
     flex-wrap: wrap;
-    margin: 30px;
-    padding: 10px;
+    margin: 20px 0 0 30px;
     max-width: 700px;
     min-width: 700px;
-    background-color: #fddfd0;
+    box-shadow: 0 2px 5px #666;
+    background-color: rgb(200, 250, 200);
+    border-radius: 5px;
 }
 
 #current-player {
     display: inline-block;
+    text-align: center;
     width: 700px;
-    padding: 10px;
+    margin: 10px 0 0 0;
+    font-size: 20px;
 }
 
 .player {
     display: inline-block;
     width: 350px;
+    height: 200px;
+    padding: 5px 0 10px 0;  
 }
 
-.all-pair-card {
+.player-name {
+    padding: 10px;
+}
+
+.pair-trump-count {
+    display: block;
+    width: 350px;
+    height: 30px;
+    padding-left: 20px;
+    font-size: 20px;
+}
+
+.all-pair-trump {
     display: block;
     width: 350px;
     margin-left: 30px;
     padding: 10px;
+}
+
+.pair-trump {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 60px;
+    margin-left: -30px;
+    padding: 3px;
+    text-align: left;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px #666;
+    background-color: #fff;
+}
+
+.pair-trump .trump-spade::after,
+.pair-trump .trump-heart::after,
+.pair-trump .trump-diamond::after,
+.pair-trump .trump-clover::after {
+    position: absolute;
+    left: 0;
+    width: 20px;
+    margin-left: 2px;
+    height: 20px;
+    margin-top: -10px;
+    top: 50%;
 }
