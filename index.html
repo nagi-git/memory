@@ -9,15 +9,22 @@
 
 <body>
     <div class="container">
-        <div id="board"></div>
+        <div id="title">
+            <font color="red">♥</font>神経衰弱♠
+        </div>
+        <div id="click-board">
+            <div id="board"></div>
+        </div>
         <div class="play-status">
             <div id="current-player"></div>
             <div id="player1" class="player">
                 <div class="player-name">プレイヤ－1</div>
+                <div class="pair-trump-count"></div>
                 <div class="all-pair-trump"></div>
             </div>
             <div id="player2" class="player">
                 <div class="player-name">プレイヤ－2</div>
+                <div class="pair-trump-count"></div>
                 <div class="all-pair-trump"></div>
             </div>
         </div>
@@ -27,14 +34,13 @@
 <script type="text/javascript">
     const BOARD_HEIGHT = 4
     const BOARD_WIDTH = 13
-    const TRUMP_COUNT = 52
     const PLAYER_COUNT = 2
 
     const BOARD = document.getElementById('board')
     const TRUMP = document.getElementsByClassName('.trump')
 
     const TRUMP_NUMS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-    const TRUMP_MARKS = ['♠', '♥', '♦', '♣']
+    const TRUMP_MARKS = ['spade', 'heart', 'diamond', 'clover']
 
     let firstChoice = ''
     let secondChoice = ''
@@ -47,19 +53,18 @@
     }
 
     function shuffleNumMarks(numMarks) {
-        return numMarks
-        // let keyNums = []
-        // let randomNums = []
-        // let trumpKeys = []
-        // for (let i = 0; i < TRUMP_COUNT; i++) {
-        //     keyNums[i] = i
-        // }
-        // for (let i = 0; keyNums.length > 0; i++) {
-        //     randomNum = intRandom(keyNums.length - 1, 0)
-        //     trumpKeys = trumpKeys.concat(keyNums.splice(randomNum, 1))
-        // }
-        
-        // return trumpKeys
+        let keyNums = []
+        let randomNums = []
+        let trumpKeys = []
+        let randomNumMarks = []
+
+        const buff = numMarks.concat([])
+        buff.forEach(() => {
+            randomNum = intRandom(numMarks.length - 1, 0)
+            randomNumMarks = randomNumMarks.concat(numMarks.splice(randomNum, 1))
+        })
+
+        return randomNumMarks
     }
 
     function createTrump() {
@@ -73,18 +78,15 @@
             trump.id = trumpId
             trump.classList.add('trump')
             BOARD.appendChild(trump)
-            setInitTrump(trump, numMark)
+            setFrontFace(trump, numMark, true)
+            setBackFace(trump, false)
         })
-    }
-
-    function setInitTrump(trump, numMark) {
-        setFrontFace(trump, numMark, true)
-        setBackFace(trump, false)
     }
 
     function setPlayer(playerNum = currentPlayerNum % PLAYER_COUNT + 1) {
         currentPlayerNum = playerNum
-        document.getElementById('current-player').innerHTML = currentPlayerNum
+        document.getElementById('current-player').innerHTML = 
+            "<strong>プレイヤー" + currentPlayerNum + "<strong>の番です"
     }
 
     function setFrontFace(trump, numMark, hidden) {
@@ -93,12 +95,14 @@
         trumpFront.hidden = hidden
         trump.appendChild(trumpFront)
 
-        Object.entries(numMark).forEach(([k, v]) => {
-            const div = document.createElement('div')
-            div.classList = `trump-${k}`
-            div.innerHTML = v
-            trumpFront.appendChild(div)
-        })
+        const div = document.createElement('div')
+        if (TRUMP_MARKS.includes(numMark.mark)) {
+            div.classList = `trump-${numMark.mark}`
+        } else {
+            div.classList = `${numMark.mark}`
+        }
+        div.innerHTML = numMark.num
+        trumpFront.appendChild(div)
     }
 
     function setBackFace(trump, hidden) {
@@ -117,61 +121,56 @@
         Array.from(trump.children)
             .forEach(face => face.hidden = true)
         trump.classList = 'remove-trump'
-        trump.removeEventListener('click', trumpClick, false) // これを消したい。
-        // カードの状態によってイベントを付けたり消したりするのは、メンテナンス性が低下する。
-        // trumpClick()内で、削除済みのカードなら何もしないようにした方がイケてます。
+        trump.removeEventListener('click', trumpClick, false)
+    }
+
+    function getTrumpContent(trump) {
+        const trumpContent = {
+            numContent: trump.children[0].textContent,
+            markContent: trump.children[0].children[0].className
+        }
+        return trumpContent
     }
 
     function addPairTrump(trump) {
-        console.log(currentPlayerNum)
-        const player = document.getElementById(`player${currentPlayerNum}`).children[1]
+        const allPairTrump = document.getElementById(`player${currentPlayerNum}`).children[2]
         const pairTrump = document.createElement('div')
         pairTrump.classList = 'pair-trump'
-        player.appendChild(pairTrump)
+        allPairTrump.appendChild(pairTrump)
         setFrontFace(pairTrump, {
-            num: trump.children[0].children[0].textContent,
-            mark: trump.children[0].children[1].textContent}, false)
+            num: getTrumpContent(trump).numContent,
+            mark: getTrumpContent(trump).markContent}, false)
+        console.log(allPairTrump)
     }
 
-    function openEventHandler(firstChoice, secondChoice) {
-        const first = firstChoice.children[0].textContent // 関数に分けよう！
-        const second = secondChoice.children[0].textContent
-        if(first == second) {
-            addPairTrump(firstChoice)
-            addPairTrump(secondChoice)
-            removeTrump(firstChoice)
-            removeTrump(secondChoice)
-        } else {
-            turnTrump(firstChoice)
-            turnTrump(secondChoice)
-            ++currentPlayerNum
-            if(currentPlayerNum > PLAYER_COUNT) {
-                currentPlayerNum = 1
-            }
-            setCurrentPlayer()
-        }
+    function updatePairTrumpCount() {
+        const pairTrumpCount = document.getElementById(`player${currentPlayerNum}`).children[1]
+        const allPairTrump = document.getElementById(`player${currentPlayerNum}`).children[2]
+        pairTrumpCount.innerHTML = '現在の枚数：' + allPairTrump.childElementCount
     }
 
-    function openEventHandler_ryo() {
+    function openEventHandler() {
         if (choices.length < 2) {
+            setTrumpClickStyle(choices[0], 'none')
             return
         }
-
-        disableClick()
+        setClickBoardStyle('none')
         setTimeout(() => {
-            const firstTrump = choices[0] // 関数に分けよう！
+            const firstTrump = choices[0]
             const secondTrump = choices[1]
-            if(firstTrump.children[0].children[0].textContent == secondTrump.children[0].children[0].textContent) {
+            if(getTrumpContent(firstTrump).numContent === getTrumpContent(secondTrump).numContent) {
                 choices.forEach(choice => {
                     addPairTrump(choice)
                     removeTrump(choice)
+                    updatePairTrumpCount()
                 })
             } else {
                 choices.forEach(turnTrump)
                 setPlayer()
             }
+            setClickBoardStyle('auto')
+            setTrumpClickStyle(choices[0], '')
             choices = []
-            ableClick()
         }, 1000)
     }
 
@@ -179,35 +178,28 @@
         const trump = event.currentTarget
         turnTrump(trump)
         choices.push(trump)
-        openEventHandler_ryo()
+        openEventHandler()
     }
 
-    function addClick() {
+    function allAddClick() {
         const trumps = document.getElementsByClassName('trump')
-        for(let i = 0; i < trumps.length; i++) {
-            trumps[i].addEventListener('click', trumpClick, false)
+        for(const trump of trumps) {
+            trump.addEventListener('click', trumpClick, false)
         }
     }
 
-    // 透明divで代替するのが良さそう
-    function disableClick() {
-        const trumps = document.getElementsByClassName('trump')
-        for(let i = 0; i < trumps.length; i++) {
-            trumps[i].style.pointerEvents = 'none'
-        }
+    function setClickBoardStyle(pointerEvent) {
+        const clickBoard = document.getElementById('click-board')
+        clickBoard.style.pointerEvents = pointerEvent
     }
 
-    function ableClick() {
-        const trumps = document.getElementsByClassName('trump')
-        for(let i = 0; i < trumps.length; i++) {
-            trumps[i].style.pointerEvents = 'auto'
-        }
+    function setTrumpClickStyle(trump, pointerEvent) {
+        trump.style.pointerEvents = pointerEvent
     }
-
 
     createTrump()
     setPlayer(firstPlayerNum)
-    addClick()
+    allAddClick()
 
 </script>
 
