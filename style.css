@@ -124,8 +124,6 @@
 .player {
     display: inline-block;
     width: 350px;
-    height: 200px;
-    padding: 5px 0 10px 0;  
 }
 
 .player-name {
@@ -142,7 +140,7 @@
 
 .all-pair-trump {
     display: block;
-    width: 350px;
+    width: 300px;
     margin-left: 30px;
     padding: 10px;
 }
@@ -171,4 +169,23 @@
     height: 20px;
     margin-top: -10px;
     top: 50%;
+}
+
+/* スマホ用 */
+@media screen and (max-width:480px) {
+    #board {
+        margin: 20px 0 0 20px;
+        max-width: 320px;
+        min-width: 320px;
+    }
+
+    .play-status {
+        margin: 20px 0 0 20px;
+        max-width: 320px;
+        min-width: 320px;
+    }
+
+    .all-pair-trump {
+        width: 270px;
+    }
 }
